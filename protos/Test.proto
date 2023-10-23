@@ -1,0 +1,148 @@
+/*
+ * KINOVA (R) KORTEX (TM)
+ *
+ * Copyright (c) 2018 Kinova inc. All rights reserved.
+ *
+ * This software may be modified and distributed
+ * under the terms of the BSD 3-Clause license.
+ *
+ * Refer to the LICENSE file for details.
+ *
+ */
+
+syntax = "proto3";
+
+import public "Common.proto";
+import public "Frame.proto";
+
+package Kinova.Api.Test;
+
+/*
+ * This is service is intended for internal use only. It is solely used in the context of unit testing.
+ */
+service Test {//@PROXY_ID=4080 @ERROR=Kinova.Api.Error
+
+    rpc SetMockValidationStruct (validateStruct) returns (Kinova.Api.Common.Empty);//@RPC_ID=1
+    rpc TestParamAndReturn (SendStruct) returns (RcvStruct);//@RPC_ID=2
+    rpc TestParamOnly (SendStruct) returns (Kinova.Api.Common.Empty);//@RPC_ID=3
+    rpc TestReturnOnly (Kinova.Api.Common.Empty) returns (RcvStruct);//@RPC_ID=4
+    rpc TestTimeout (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=5
+    rpc TestNotif (NotifOption) returns (Kinova.Api.Common.NotificationHandle);//@RPC_ID=6 @PUB_SUB=TestNotification
+    rpc TestNotifUnsubscribe (Kinova.Api.Common.NotificationHandle) returns (Kinova.Api.Common.Empty);//@RPC_ID=7 @UNSUB
+    rpc TestAsync (timeToResponse) returns (Kinova.Api.Common.Empty);//@RPC_ID=8
+    rpc TestConcurrence (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=9
+    rpc TestTriggerNotif (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=10
+    rpc TestNotImplemented (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=11
+    rpc ServerError (TestError) returns (TestError);//@RPC_ID=12
+
+    // Unsubscribes from a given notification
+    rpc Unsubscribe (Kinova.Api.Common.NotificationHandle) returns (Kinova.Api.Common.Empty);//@RPC_ID=30 @UNSUB
+
+    // Registers to "SomethingChangeTopic" that has changed (notification)
+    rpc SomethingChangeTopic (Kinova.Api.Common.NotificationOptions) returns (Kinova.Api.Common.NotificationHandle);//@RPC_ID=31 @PUB_SUB=SomethingChanged
+
+    // Triggers "SomethingChangeTopic" notification
+    rpc TriggerSomethingChangeTopic (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=32
+
+    // Waits for a given time before reply
+    rpc Wait (Delay) returns (Kinova.Api.Common.Empty);//@RPC_ID=33
+
+    // Returns a given error
+    rpc Throw (Kinova.Api.Error) returns (Kinova.Api.Common.Empty);//@RPC_ID=34
+
+    // Server will close the current session (clean=false)
+    rpc Disconnect (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=35
+
+    // Server never replies
+    rpc Forget (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=36
+
+    // Should return a "not implemented" error
+    rpc NotImplemented (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=37
+
+    // Request from server
+    rpc RequestFromServer (RequestFromServerMessage) returns (ResponseFromClientMessage);//@RPC_ID=38 @CMD
+
+    // Purposely deprecated method
+    rpc Deprecated (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=39 @DEPRECATED
+
+    // Purposely deprecated method (with message)
+    rpc DeprecatedWithMessage (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=40 @DEPRECATED="Purposely deprecated for test"
+}
+
+enum ServiceVersion {
+    RESERVED_0 = 0;
+    CURRENT_VERSION = 1;  // Current version
+}
+
+message validateStruct {
+    SendStruct client_struct = 1;
+    RcvStruct server_struct = 2;
+}
+
+message SendStruct {
+    bytes bytes_value = 1;
+    uint32 uint32_value = 2;
+    fixed32 fixed32_value = 3;
+    string string_value = 4;
+    Enum enum_value = 5;
+    EmbeddedStruct embedded_struct_value = 6;
+    repeated uint32 repeated_uint32_value =7;
+}
+
+message EmbeddedStruct {
+    uint32 embedded_uint = 1;
+}
+
+enum Enum {
+    ENUM_0 = 0;
+    ENUM_1 = 1;
+    ENUM_2 = 2;
+}
+
+message RcvStruct {
+    bytes bytes_value = 1;
+    uint32 uint32_value = 2;
+    fixed32 fixed32_value = 3;
+    string string_value = 4;
+    Enum enum_value = 5;
+    EmbeddedStruct embedded_struct_value = 6;
+    repeated uint32 repeated_uint32_value =7;
+}
+
+message NotifOption {
+    uint32 dummy_option = 1;    
+}
+
+message NotifData {
+    uint32 data = 1;
+}
+
+message timeToResponse {
+    uint32 time_ms = 1;
+}
+
+message TestNotification {
+    uint32 dummy_property = 1;   
+}
+
+message TestError {
+    uint32 errorCode = 1;
+}
+
+message SomethingChanged {
+    Kinova.Api.Common.Timestamp timestamp = 1;           // Event timestamp
+    Kinova.Api.Common.UserProfileHandle user_handle = 2; // User that caused the user profile event (i.e. user who changed the user profile)
+    NotifData data = 3;
+}
+
+message Delay {
+    uint32 ms = 1;
+}
+
+message RequestFromServerMessage {
+    string req = 1;
+}
+
+message ResponseFromClientMessage {
+    string res = 1;
+}

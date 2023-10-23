@@ -1,0 +1,110 @@
+/*
+ * KINOVA (R) KORTEX (TM)
+ *
+ * Copyright (c) 2018 Kinova inc. All rights reserved.
+ *
+ * This software may be modified and distributed
+ * under the terms of the BSD 3-Clause license.
+ *
+ * Refer to the LICENSE file for details.
+ *
+ */
+ 
+syntax = "proto3";
+
+import public "Common.proto";
+
+package Kinova.Api.RTLogger;
+
+service RTLogger {//@PROXY_ID=8 @ERROR=Kinova.Api.Error
+    rpc StartLogging (LoggingFile) returns (Kinova.Api.Common.Empty);//@RPC_ID=1
+    rpc StopLogging (Kinova.Api.Common.Empty) returns (Kinova.Api.Common.Empty);//@RPC_ID=2
+    rpc SetRefActuatorCustomDataChannelSelection (CustomDataChannel) returns (Kinova.Api.Common.Empty);//@RPC_ID=3
+    rpc GetRefActuatorCustomDataChannels (Kinova.Api.Common.Empty) returns (CustomDataChannel);//@RPC_ID=4
+    rpc ResetActuatorUnderTest (ActuatorIp) returns (ActuatorReset);//@RPC_ID=5
+    rpc SetActuatorRefRunMode (ActuatorRunMode) returns (Kinova.Api.Common.Empty);//@RPC_ID=6
+}
+
+enum ServiceVersion {
+    RESERVED_0 = 0;
+    CURRENT_VERSION = 1;  // Current version
+}
+
+enum RunMode {
+    RUN_MODE_RUNNING = 0;
+    RUN_MODE_CALIBRATION = 1;
+    RUN_MODE_CONFIGURATION = 2;
+    RUN_MODE_DEBUG = 3;
+    RUN_MODE_TUNING = 4;
+}
+
+message ActuatorRunMode {
+    RunMode mode = 1;
+}
+
+message IPv4Configuration {
+    string ip_address = 1;
+    string port = 2;
+}
+
+message ActuatorIp {
+    string ip_address = 1;
+}
+
+message ActuatorReset {
+    bool has_reset = 1;
+}
+
+message CustomDataChannel {
+    uint32 channel0 = 1;
+    uint32 channel1 = 2;
+    uint32 channel2 = 3;
+    uint32 channel3 = 4;
+    uint32 channel4 = 5;
+    uint32 channel5 = 6;
+    uint32 channel6 = 7;
+    uint32 channel7 = 8;
+}
+
+
+// TODO Expose an enum in ActuatorConfig.proto that excludes Etercat-related stuff
+enum ActuatorCustomDataSelect
+{
+    UNDEFINED = 0;
+    UINT32_TEST_RAMP = 1;
+    UINT32_MOTOR_ENCODER_RAW = 2;
+    UINT32_JOINT_ENCODER_RAW = 3;
+    FLOAT_TEMPERATURE_PHASE0 = 4;
+    FLOAT_TEMPERATURE_PHASE1 = 5;
+    FLOAT_TEMPERATURE_PHASE2 = 6;
+    INT32_TORQUE_SENSOR_RAW0 = 7;
+    INT32_TORQUE_SENSOR_RAW1 = 8;
+    INT32_TORQUE_SENSOR_RAW2 = 9;
+    INT32_TORQUE_SENSOR_RAW3 = 10;
+    FLOAT_TORQUE_SENSOR0 = 11;
+    FLOAT_TORQUE_SENSOR1 = 12;
+    FLOAT_TORQUE_SENSOR2 = 13;
+    FLOAT_TORQUE_SENSOR3 = 14;
+    UINT32_MOTOR_ENCODER_RAW_LATCH_ON_INDEX_RISING = 15;
+    UINT32_JOINT_ENCODER_RAW_LATCH_ON_INDEX_RISING = 16;
+    UINT32_POS_SENSOR_RAW = 17;
+    FLOAT_POS_SENSOR = 18;
+    FLOAT_CONTROL_POSITION_JOINT_REQUESTED = 19;
+    UINT32_JIG_FLAGS = 20;
+    UINT32_TICK_MOTOR_CONTROL = 21;
+    UINT32_TICK_JOINT_CONTROL = 22;
+    UINT32_INDEX_TICK_MOTOR_CONTROL = 23;
+    UINT32_INDEX_TICK_JOINT_CONTROL = 24;
+    FLOAT_ACCELERATION_X = 25;
+    FLOAT_ACCELERATION_Y = 26;
+    FLOAT_ACCELERATION_Z = 27;
+    FLOAT_ANGULAR_RATE_X = 28;
+    FLOAT_ANGULAR_RATE_Y = 29;
+    FLOAT_ANGULAR_RATE_Z = 30;
+};
+
+
+message LoggingFile {
+    string logging_path = 1;
+    string file_name = 2;
+}

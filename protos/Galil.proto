@@ -1,0 +1,172 @@
+/*
+ * KINOVA (R) KORTEX (TM)
+ *
+ * Copyright (c) 2018 Kinova inc. All rights reserved.
+ *
+ * This software may be modified and distributed
+ * under the terms of the BSD 3-Clause license.
+ *
+ * Refer to the LICENSE file for details.
+ *
+ */
+
+syntax = "proto3";
+ 
+import public "Common.proto";
+
+package Kinova.Api.Galil;
+
+service Galil {//@PROXY_ID=7 @ERROR=Kinova.Api.Error
+    rpc Connect (IPv4Configuration) returns (StatusCode);//@RPC_ID=1
+    rpc Disconnect (Kinova.Api.Common.Empty) returns (NoReturn);//@RPC_ID=2
+    rpc Initialize (Kinova.Api.Common.Empty) returns (StatusCode);//@RPC_ID=3
+    rpc SetControlMode (ControlMode) returns (StatusCode);//@RPC_ID=4
+    rpc GetControlMode (Kinova.Api.Common.Empty) returns (ControlMode);//@RPC_ID=5
+    rpc StartMotor (Motion) returns (StatusCode);//@RPC_ID=6
+    rpc StopMotion (Motion) returns (StatusCode);//@RPC_ID=7
+    rpc UpdateRate (AcquisitionRate) returns (StatusCode);//@RPC_ID=8
+    rpc GetUpdateRate (Kinova.Api.Common.Empty) returns (AcquisitionRate);//@RPC_ID=9
+    rpc WriteDigitalOut (DigitalOut) returns (StatusCode);//@RPC_ID=10
+    rpc WriteDigitalOutBit (DigitalOutBit) returns (StatusCode); //@RPC_ID=11
+    rpc ReadDigitalIn (DigitalIn) returns (StatusCode); //@RPC_ID=12
+    rpc SetPositionModeReference (PositionModeReference) returns (StatusCode); //@RPC_ID=13
+    rpc GetPositionModeReference (Kinova.Api.Common.Empty) returns (PositionModeReference); //@RPC_ID=14
+    rpc SetPositionModeLimits (PositionModeLimits) returns (StatusCode); //@RPC_ID=15
+    rpc GetPositionModeLimits (Kinova.Api.Common.Empty) returns (PositionModeLimits); //@RPC_ID=16
+    rpc SetSpeedModeReference (SpeedModeReference) returns (StatusCode); //@RPC_ID=17
+    rpc GetSpeedModeReference (Kinova.Api.Common.Empty) returns (SpeedModeReference); //@RPC_ID=18
+    rpc SetSpeedModeLimits (SpeedModeLimits) returns (StatusCode); //@RPC_ID=19
+    rpc GetSpeedModeLimits (Kinova.Api.Common.Empty) returns (SpeedModeLimits); //@RPC_ID=20
+    rpc SetTorqueModeReference (TorqueModeReference) returns (StatusCode); //@RPC_ID=21
+    rpc GetTorqueModeReference (Kinova.Api.Common.Empty) returns (TorqueModeReference); //@RPC_ID=22
+    rpc SetTorqueModeLimits (TorqueModeLimits) returns (StatusCode); //@RPC_ID=23
+    rpc GetTorqueModeLimits (Kinova.Api.Common.Empty) returns (TorqueModeLimits); //@RPC_ID=24
+    rpc SetTorqueSensorRatio (TorqueSensorRatio) returns (StatusCode); //@RPC_ID=25
+    rpc GetTorqueSensorRatio (Kinova.Api.Common.Empty) returns (TorqueSensorRatio); //@RPC_ID=26
+    rpc SetMaxTorque (MaxTorque) returns (StatusCode); //@RPC_ID=27
+    rpc GetMaxTorque (Kinova.Api.Common.Empty) returns (MaxTorque); //@RPC_ID=28
+    rpc SetTorqueCalibrationOffset (TorqueCalibrationOffset) returns (StatusCode); //@RPC_ID=29
+    rpc GetTorqueCalibrationOffset (Kinova.Api.Common.Empty) returns (TorqueCalibrationOffset); //@RPC_ID=30
+    rpc SetTorqueClockwiseGain (TorqueClockwiseGain) returns (StatusCode); //@RPC_ID=31
+    rpc GetTorqueClockwiseGain (Kinova.Api.Common.Empty) returns (TorqueClockwiseGain); //@RPC_ID=32
+    rpc SetTorqueCounterClockwiseGain (TorqueCounterClockwiseGain) returns (StatusCode); //@RPC_ID=33
+    rpc GetTorqueCounterClockwiseGain (Kinova.Api.Common.Empty) returns (TorqueCounterClockwiseGain); //@RPC_ID=34
+    rpc Logging (Logger) returns (StatusCode); //@RPC_ID=35
+
+}
+
+enum ServiceVersion {
+    RESERVED_0 = 0;         // Reserved
+    CURRENT_VERSION = 1;    // Current version
+}
+
+enum GalilControlMode {
+    MODE_UNSET = 0;
+    MODE_POSITION = 1;
+    MODE_TORQUE_STATIC = 2;
+    MODE_TORQUE_DYNAMIC = 3;
+    MODE_SPEED = 4;
+}
+
+enum GalilStatusCode {
+    GALIL_OK = 0;
+    GALIL_ERROR = 1;
+    GALIL_INVALID_DRIVE_ID = 2;
+    GALIL_CONNECTION_ERROR = 3;
+    GALIL_INITIALIZATION_ERROR_THREAD_FAILED_TO_START = 4;
+    GALIL_INITIALIZATION_ERROR_DRIVE_CONFIG_FAIL = 5;
+    GALIL_DISCONNECT_ERROR = 6;
+    GALIL_DISCONNECT_ERROR_THREAD_NOT_CLOSED = 7;
+    GALIL_UNSUPPORTED_CONTROL_MODE = 8;
+    GALIL_COMMAND_ERROR = 9;
+    GALIL_MOTOR_STOP_TIMEOUT = 10;
+    GALIL_INVALID_PARAMETER_OUT_OF_RANGE = 11;
+    GALIL_INVALID_PARAMETER_VOID_POINTER = 12;
+    GALIL_WRONG_CONTROL_MODE_COMMAND = 13;
+}
+
+message NoReturn {}
+
+message IPv4Configuration {
+    string ip_address = 1;
+}
+
+message StatusCode {
+    GalilStatusCode code = 1;
+}
+
+message ControlMode {
+    GalilControlMode mode = 1;
+}
+
+message Motion {
+    bool move = 1;
+}
+message AcquisitionRate {
+    double period_ms = 1;
+}
+
+message DigitalOut {
+    uint32 data = 1;
+}
+
+message DigitalOutBit {
+    uint32 bit_number = 1;
+    bool data = 2;
+}
+
+message DigitalIn {
+    uint32 data = 1;
+}
+
+message PositionModeReference {
+    float position = 1;
+}
+
+message PositionModeLimits {
+    float acceleration = 1;
+    float speed = 2;
+    float torque = 3;
+}
+
+message SpeedModeReference {
+    float speed = 1;
+}
+
+message SpeedModeLimits {
+    float acceleration = 1;
+    float torque = 2;
+}
+
+message TorqueModeReference {
+    float torque = 1;
+}
+
+message TorqueModeLimits {
+    float acceleration = 1;
+    float speed = 2;
+}
+
+message TorqueSensorRatio {
+    float ratio = 1;
+}
+
+message MaxTorque {
+    float max_torque = 1;
+}
+
+message TorqueCalibrationOffset {
+    float torque_calibration_offset = 1;
+}
+
+message TorqueClockwiseGain {
+    float clockwise_gain = 1;
+}
+
+message TorqueCounterClockwiseGain {
+    float counter_clockwise_gain = 1;
+}
+
+message Logger {
+    bool enable = 1;
+}
