@@ -21,7 +21,7 @@ if sys.version_info >= (3, 10):
     import typing as typing_extensions
 else:
     import typing_extensions
-from Common_pb2 import (
+from .Common_pb2 import (
     ALBANIA_AL as ALBANIA_AL,
     AMERICAN_SAMOA_AS as AMERICAN_SAMOA_AS,
     AMPERE as AMPERE,
@@ -240,7 +240,7 @@ from Common_pb2 import (
     VOLT as VOLT,
     XBIG_ACTUATOR as XBIG_ACTUATOR,
 )
-from InterconnectCyclicMessage_pb2 import (
+from .InterconnectCyclicMessage_pb2 import (
     Command as Command,
     CustomData as CustomData,
     Feedback as Feedback,

@@ -14,9 +14,9 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import Common_pb2 as Common__pb2
+from . import Common_pb2 as Common__pb2
 
-from Common_pb2 import *
+from .Common_pb2 import *
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='ActuatorConfig.proto',

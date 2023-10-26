@@ -14,15 +14,15 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import Common_pb2 as Common__pb2
-import Frame_pb2 as Frame__pb2
+from . import Common_pb2 as Common__pb2
+from . import Frame_pb2 as Frame__pb2
 try:
   Errors__pb2 = Frame__pb2.Errors__pb2
 except AttributeError:
   Errors__pb2 = Frame__pb2.Errors_pb2
 
-from Common_pb2 import *
-from Frame_pb2 import *
+from .Common_pb2 import *
+from .Frame_pb2 import *
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='Test.proto',

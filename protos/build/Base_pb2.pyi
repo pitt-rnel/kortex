@@ -11,8 +11,11 @@ under the terms of the BSD 3-Clause license.
 
 Refer to the LICENSE file for details.
 """
-import Common_pb2
-import Errors_pb2
+
+from . import Common_pb2
+from . import Errors_pb2
+#import Common_pb2
+#import Errors_pb2
 import builtins
 import collections.abc
 import google.protobuf.descriptor
@@ -26,7 +29,7 @@ if sys.version_info >= (3, 10):
     import typing as typing_extensions
 else:
     import typing_extensions
-from Common_pb2 import (
+from .Common_pb2 import (
     ALBANIA_AL as ALBANIA_AL,
     AMERICAN_SAMOA_AS as AMERICAN_SAMOA_AS,
     AMPERE as AMPERE,
@@ -245,7 +248,7 @@ from Common_pb2 import (
     VOLT as VOLT,
     XBIG_ACTUATOR as XBIG_ACTUATOR,
 )
-from Errors_pb2 import (
+from .Errors_pb2 import (
     ACTION_IN_USE as ACTION_IN_USE,
     ADDRESS_NOT_CONFIGURABLE as ADDRESS_NOT_CONFIGURABLE,
     ADDRESS_NOT_IN_VALID_RANGE as ADDRESS_NOT_IN_VALID_RANGE,
@@ -354,7 +357,7 @@ from Errors_pb2 import (
     WIFI_CONNECT_ERROR as WIFI_CONNECT_ERROR,
     WRONG_SERVOING_MODE as WRONG_SERVOING_MODE,
 )
-from ProductConfiguration_pb2 import (
+from .ProductConfiguration_pb2 import (
     ARM_LATERALITY_LEFT as ARM_LATERALITY_LEFT,
     ARM_LATERALITY_NOT_APPLICABLE as ARM_LATERALITY_NOT_APPLICABLE,
     ARM_LATERALITY_RIGHT as ARM_LATERALITY_RIGHT,

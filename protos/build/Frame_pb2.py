@@ -14,9 +14,9 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import Errors_pb2 as Errors__pb2
+from . import Errors_pb2 as Errors__pb2
 
-from Errors_pb2 import *
+from .Errors_pb2 import *
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='Frame.proto',

@@ -14,17 +14,17 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import Common_pb2 as Common__pb2
-import Errors_pb2 as Errors__pb2
-import ProductConfiguration_pb2 as ProductConfiguration__pb2
+from . import Common_pb2 as Common__pb2
+from . import Errors_pb2 as Errors__pb2
+from . import ProductConfiguration_pb2 as ProductConfiguration__pb2
 try:
   Common__pb2 = ProductConfiguration__pb2.Common__pb2
 except AttributeError:
   Common__pb2 = ProductConfiguration__pb2.Common_pb2
 
-from Common_pb2 import *
-from Errors_pb2 import *
-from ProductConfiguration_pb2 import *
+from .Common_pb2 import *
+from .Errors_pb2 import *
+from .ProductConfiguration_pb2 import *
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='Base.proto',

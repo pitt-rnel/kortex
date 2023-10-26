@@ -11,7 +11,7 @@ under the terms of the BSD 3-Clause license.
 
 Refer to the LICENSE file for details.
 """
-import GripperCyclicMessage_pb2
+from . import GripperCyclicMessage_pb2
 import builtins
 import google.protobuf.descriptor
 import google.protobuf.message
@@ -21,7 +21,7 @@ if sys.version_info >= (3, 8):
     import typing as typing_extensions
 else:
     import typing_extensions
-from Common_pb2 import (
+from .Common_pb2 import (
     ALBANIA_AL as ALBANIA_AL,
     AMERICAN_SAMOA_AS as AMERICAN_SAMOA_AS,
     AMPERE as AMPERE,
@@ -240,7 +240,7 @@ from Common_pb2 import (
     VOLT as VOLT,
     XBIG_ACTUATOR as XBIG_ACTUATOR,
 )
-from GripperCyclicMessage_pb2 import (
+from .GripperCyclicMessage_pb2 import (
     Command as Command,
     CustomData as CustomData,
     CustomDataUnit as CustomDataUnit,

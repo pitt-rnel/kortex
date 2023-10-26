@@ -11,7 +11,7 @@ under the terms of the BSD 3-Clause license.
 
 Refer to the LICENSE file for details.
 """
-import Errors_pb2
+from . import Errors_pb2
 import builtins
 import google.protobuf.descriptor
 import google.protobuf.internal.enum_type_wrapper
@@ -23,7 +23,7 @@ if sys.version_info >= (3, 10):
     import typing as typing_extensions
 else:
     import typing_extensions
-from Errors_pb2 import (
+from .Errors_pb2 import (
     ACTION_IN_USE as ACTION_IN_USE,
     ADDRESS_NOT_CONFIGURABLE as ADDRESS_NOT_CONFIGURABLE,
     ADDRESS_NOT_IN_VALID_RANGE as ADDRESS_NOT_IN_VALID_RANGE,
