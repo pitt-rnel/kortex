@@ -1,4 +1,7 @@
-""" This module requires  the inputs library (https://github.com/zeth/inputs).
+""" 
+Module to read xbox controller state on windows pc.
+
+This module requires the inputs library (https://github.com/zeth/inputs).
 However, we bypass all the event simulation and just use it to grab the state of the 
 xbox gamepad whenever the user requests it. This eliminates the need for background threads
 and more complicated async configurations for simple testing.
@@ -40,7 +43,6 @@ class XboxController(object):
     MAX_JOY_VAL = math.pow(2, 15)
 
     def __init__(self):
-
         self._state_names = (
             "buttons",
             "l_thumb_x",
@@ -91,7 +93,7 @@ class XboxController(object):
 
         self.gamepad = devices.gamepads[0]
 
-    def read_controller(self) -> Optional[XinputState]:
+    def _read_controller(self) -> Optional[XinputState]:
         """Read the state of the gamepad."""
         state = XinputState()
 
@@ -108,8 +110,8 @@ class XboxController(object):
             )
         return None
 
-    def read(self):
-        state = self.read_controller()
+    def read_controller(self):
+        state = self._read_controller()
         if state is not None:
             self.state = state.gamepad
             return {n: getattr(self, n) for n in self.names}
@@ -196,6 +198,6 @@ class XboxController(object):
 if __name__ == "__main__":
     joy = XboxController()
     while True:
-        values = str(joy.read()).replace("\n", " ")
-        print(f"\r{values}", end="")
+        values = joy.read_controller()
+        print(f"\r{joy.left_joystick}", end="")
         time.sleep(0.050)
