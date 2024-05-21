@@ -55,9 +55,15 @@
 #include <arpa/inet.h>
 #define SOCKET int
 #endif
+
+#include <stdio.h>
+#include <string.h>
+#include <chrono>
+#include <math.h>
+
 namespace k_api = Kinova::Api;
 
-#define IP_ADDRESS "192.168.1.10"
+#define IP_ADDRESS "192.168.110.11"
 #define PORT 10000
 
 ///////////////////////////////////////////////////////////////////////
@@ -145,7 +151,8 @@ public:
 
     void Run()
     {
-        const char test_string[] = "This is a string written to the UART using the bridge\n";
+        const char test_string[] = "abcdefghijklmnopqrsuvwxyz\n";
+        char buffer[128] = { 0 };
 
         if (m_interconnect_device_id == 0)
         {
@@ -200,34 +207,101 @@ public:
         ///////////////////////////////////////////////////////////////////////
         // Open TCP socket to bridge port and send sample data through socket
         ///////////////////////////////////////////////////////////////////////
+        
+        int num_packets = 1000; // Number of test packets to send
+        int packets_sent = 1;
+
+        // Initialize some vars for calculating timing stats
+        int i = 0;
+        double t[100] = { 0 };
+        double sum = 0.0;
+        double tmin = 0.0;
+        double tmax = 0.0;
+        double avg = 0.0;
+        double sse = 0.0;
+        double stdev = 0.0;
+        int bytes_sent = 0;
+        int bytes_read = 0;
 
         SOCKET uart_socket = ConnectSocket(IP_ADDRESS, base_port);
-        if (uart_socket >= 0)
+        if (uart_socket < 0)
         {
-            send(uart_socket, test_string, sizeof(test_string), 0 );
+            std::cout << "Socket Connect failed\n";
+            return;
         }
 
-        ///////////////////////////////////////////////////////////////////////
-        // Wait 10 seconds to receive data from socket
-        ///////////////////////////////////////////////////////////////////////
+        for (; packets_sent <= num_packets; packets_sent++) {
+            // Mark the send time of packet
+            std::chrono::time_point<std::chrono::steady_clock> tx_timestamp = chrono::steady_clock::now();
 
-        char rx_char;
-        std::cout << "Waiting about 10 seconds to receive data from UART" << std::endl;
-        std::cout << "Characters received : ";
-        std::flush(std::cout);
-
-        // Display received characters from UART bridge socket for 10 seconds.
-        auto startTime = std::chrono::system_clock::now();
-        auto currentTime = startTime;
-        while ( std::chrono::duration<double>(currentTime - startTime).count() < 10.0)
-        {
-            // Wait for data for about 10 seconds.
-            if (GetSocketChar(uart_socket, &rx_char))
-            {
-                std::cout << rx_char;
-                std::flush(std::cout);
+            // Send data through the bridge
+            bytes_sent = send(uart_socket, test_string, sizeof(test_string), 0);
+            if (bytes_sent != sizeof(test_string)) {
+                fprintf(stderr, "Did not send the full test string. %d of %zu\n", bytes_sent, sizeof(test_string));
+                return;
             }
-            currentTime = std::chrono::system_clock::now();
+
+            // Block waiting for data to echo back
+            bytes_read = recv(uart_socket, buffer, sizeof(test_string), MSG_WAITALL);
+            if (bytes_read != bytes_sent) {
+                fprintf(stderr, "Wrong number of bytes received. %d of %d\n", bytes_read, bytes_sent);
+                return;
+
+            }
+
+            // Mark the receive time of the reply
+            std::chrono::time_point<std::chrono::steady_clock> rx_timestamp = chrono::steady_clock::now();
+
+            // Calculate the roundtrip time and store the time
+            std::chrono::duration<double> dt = rx_timestamp - tx_timestamp;
+            t[i] = dt.count();
+            i++;
+
+            // Check the reply
+            if (strcmp(test_string, buffer) != 0) {
+                fprintf(stderr, "Reply was invalid: %s\n", buffer);
+                return;
+            }
+
+            // Print stats every 100 packets
+            if ((i % 100) == 0) {
+                sum = 0.0;
+                stdev = 0.0;
+                avg = 0.0;
+                tmin = 100.0;
+                tmax = 0.0;
+                sse = 0.0;
+
+                // Calculate average and range
+                for (int n = 0; n < 100; n++) {
+                    // Aggregate sum
+                    sum = sum + t[n];
+
+                    // Store min
+                    if (t[n] < tmin) {
+                        tmin = t[n];
+                    }
+
+                    // Store max
+                    if (t[n] > tmax) {
+                        tmax = t[n];
+                    }
+                }
+                
+                avg = sum / 100.0;
+                
+                // Calculate standard deviation
+                for (int n = 0; n < 100; n++) {
+                    sse = sse + pow(t[n] - avg, 2);
+                }
+                stdev = sqrt(sse / 100.0);
+
+                // Print packet timing info
+                printf("[%05d]:  %0.6f +/- %0.6f [%0.6f to %0.6f] secs\n", packets_sent, avg, stdev, tmin, tmax);
+
+                // Reset counter
+                i = 0;
+            }
         }
 
         std::cout << std::endl;
@@ -325,39 +399,6 @@ private:
         }
         return sock;
     }
-
-    bool GetSocketChar(int sock, char* out_char)
-    {
-        if (out_char == nullptr)
-        {
-            return false;
-        }
-        if (sock == 0)
-        {
-            return false;
-        }
-
-        struct timeval ts;
-        ts.tv_sec = 0; // 1 millisecond
-        ts.tv_usec = 0;
-        fd_set fds;
-        FD_ZERO(&fds);
-        FD_SET(sock, &fds);
-
-        int nready = select(sock + 1, &fds, (fd_set *) 0, (fd_set *) 0, &ts);
-        if (nready <= 0)
-        {
-            return false;
-        }
-        if (FD_ISSET(sock, &fds))
-        {
-            if (recv(sock, out_char, 1, 0) > 0)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 };
 
 // Example core
@@ -365,7 +406,7 @@ private:
 int main(int argc, char **argv)
 {
     UARTBridge* uart_bridge;
-    uart_bridge = new UARTBridge(IP_ADDRESS, PORT, "admin", "admin");
+    uart_bridge = new UARTBridge(IP_ADDRESS, PORT, "rnel", "monkeydew");
     uart_bridge->Init();
     uart_bridge->Run();
 
